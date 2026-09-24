@@ -2,7 +2,7 @@
 
 > Este archivo está diseñado para ser consumido por agentes IA. Contiene árboles de decisión, matrices de compatibilidad, reglas con niveles de confianza, casos excepcionales documentados y URLs de fuentes primarias. Todo el conocimiento de la enciclopedia está condensado aquí en formato machine-readable.
 
-**Enciclopedia completa**: 46 docs + glosario = 48 archivos en `comfyui-enciclopedia/`
+**Enciclopedia completa**: 50 docs + glosario = 52 archivos en `comfyui-enciclopedia/`
 **Perfil hardware usuario Pablo**: `docs/37-perfiles-hardware.md`
 
 ---
@@ -543,5 +543,9 @@ HARDWARE Y PYTORCH:
 44-estilos-visuales.md          ← 20+ estilos con fórmulas de prompt y parámetros exactos
 45-recetas-probadas.md          ← 10 recetas YAML con parámetros validados y modos de fallo
 46-condiciones-especiales.md    ← CE-S001-S004, CE-P001-P003, CE-C001-C003, CE-W001-W004, CE-M001-M004, CE-H001-H003 + trucos
+47-differential-diffusion-stylealigned.md ← denoising variable por zona, coherencia de estilo batch, CE-DD/SA
+48-ipadapter-v2-multi-referencia.md       ← FaceID v2, StyleComposition, multi-embed, weight_type, InsightFace
+49-comfyui-n8n-automatizacion-produccion.md ← n8n + API, batch automático, Telegram bot, WebSocket, CE-N8N
+50-keyframing-avanzado-video.md           ← Deforum-style, AnimateDiff motion keys, narrativa multi-escena, CE-KF
 glosario.md                     ← ~50 términos A-Z
 ```

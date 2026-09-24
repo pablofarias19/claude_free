@@ -4,7 +4,7 @@
 
 Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, video IA, herramientas de entrenamiento, generación 3D/audio, segmentación, preservación de identidad, poses y nube. Todos los documentos incluyen declaraciones técnicas para consumo por agentes IA, casos excepcionales y recursos.
 
-**Total: 46 documentos + glosario + PARA-IA = 48 archivos**
+**Total: 50 documentos + glosario + PARA-IA = 52 archivos**
 
 ---
 
@@ -55,6 +55,8 @@ Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, v
 | [44](docs/44-estilos-visuales.md) | Estilos Visuales | 20+ estilos con fórmulas exactas de prompt, samplers, modelos |
 | [45](docs/45-recetas-probadas.md) | Recetas Probadas | 10 workflows con parámetros exactos validados en hardware real |
 | [46](docs/46-condiciones-especiales.md) | Condiciones Especiales | CE-S/P/C/W/M/H — 15+ casos excepcionales documentados + trucos |
+| [47](docs/47-differential-diffusion-stylealigned.md) | Differential Diffusion + StyleAligned | Denoising variable por zona y coherencia de estilo en batch |
+| [48](docs/48-ipadapter-v2-multi-referencia.md) | IP-Adapter v2 Multi-Referencia | FaceID v2, StyleComposition, multi-embed, start/end_at |
 
 ### Avanzado — Video IA
 
@@ -64,6 +66,7 @@ Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, v
 | [24](docs/24-modelos-text-to-video.md) | Modelos Text-to-Video | CogVideoX, LTX, Mochi, Hunyuan, Wan2.1 |
 | [25](docs/25-consistencia-temporal.md) | Consistencia Temporal | RIFE, optical flow, depth-guided, schedules |
 | [26](docs/26-video-edicion.md) | Video Edición | v2v, style transfer, VHS nodes, batch VRAM |
+| [50](docs/50-keyframing-avanzado-video.md) | Keyframing Avanzado | Deforum-style, AnimateDiff motion keys, narrativa multi-escena |
 
 ### Herramientas y Sistemas
 
@@ -76,6 +79,7 @@ Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, v
 | [37](docs/37-perfiles-hardware.md) | Perfiles de Hardware | **Perfil Pablo (RTX 5080)**, perfiles 4–24 GB VRAM |
 | [41](docs/41-dynamic-prompts-llm.md) | Prompts Dinámicos + LLM | Wildcards, Ollama, generación de prompts con IA |
 | [42](docs/42-comfyui-cloud-runpod.md) | ComfyUI en la Nube | RunPod, Vast.ai, Colab, tunnels SSH, API remota |
+| [49](docs/49-comfyui-n8n-automatizacion-produccion.md) | Automatización n8n | n8n + ComfyUI API, batch nocturno, Telegram bot, WebSocket |
 | [PARA-IA](PARA-IA.md) | Guía para Agentes IA | Árboles de decisión, matrices, casos excepcionales |
 
 ---
