@@ -2,13 +2,13 @@
 
 > **AGENTES IA**: Empezar por [`PARA-IA.md`](./PARA-IA.md) — contiene árboles de decisión, matrices de compatibilidad, casos excepcionales y fuentes. El perfil de hardware del usuario está en [`docs/37-perfiles-hardware.md`](./docs/37-perfiles-hardware.md).
 
-Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, video IA, herramientas de entrenamiento, generación 3D y audio. Todos los documentos incluyen declaraciones técnicas para consumo por agentes IA, casos excepcionales y recursos.
+Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, video IA, herramientas de entrenamiento, generación 3D/audio, segmentación, preservación de identidad, poses y nube. Todos los documentos incluyen declaraciones técnicas para consumo por agentes IA, casos excepcionales y recursos.
 
-**Total: 37 documentos + glosario + PARA-IA = 39 archivos**
+**Total: 43 documentos + glosario + PARA-IA = 45 archivos**
 
 ---
 
-## 📖 Índice
+## 📖 Índice completo
 
 ### Fundamentos
 
@@ -48,6 +48,10 @@ Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, v
 | [32](docs/32-stable-cascade.md) | Stable Cascade | Arquitectura 3 etapas, compresión 42x, LoRAs |
 | [35](docs/35-depth-estimation.md) | Estimación de Profundidad | Marigold, Depth Anything v2, DepthPro, ControlNet |
 | [36](docs/36-3d-generation.md) | Generación 3D | TripoSR, Zero123++, InstantMesh, Gaussian Splatting |
+| [38](docs/38-segmentacion-sam.md) | Segmentación SAM+YOLO | SAM, YOLO, Grounding DINO, BiRefNet, máscaras |
+| [39](docs/39-layer-diffusion.md) | Layer Diffusion | Imágenes con alpha, composición por capas, FG/BG |
+| [40](docs/40-photomaker-instantid.md) | Preservación de Identidad | PhotoMaker, InstantID, PuLID, IP-Adapter FaceID |
+| [43](docs/43-pose-estimation.md) | Estimación de Pose | DWPose, OpenPose, ControlNet pose, video pose |
 
 ### Avanzado — Video IA
 
@@ -67,6 +71,8 @@ Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, v
 | [33](docs/33-multi-gpu.md) | Multi-GPU | Múltiples instancias, load balancing, monitoreo |
 | [34](docs/34-audio-generation.md) | Generación de Audio | MusicGen, AudioLDM2, Bark TTS, video+audio |
 | [37](docs/37-perfiles-hardware.md) | Perfiles de Hardware | **Perfil Pablo (RTX 5080)**, perfiles 4–24 GB VRAM |
+| [41](docs/41-dynamic-prompts-llm.md) | Prompts Dinámicos + LLM | Wildcards, Ollama, generación de prompts con IA |
+| [42](docs/42-comfyui-cloud-runpod.md) | ComfyUI en la Nube | RunPod, Vast.ai, Colab, tunnels SSH, API remota |
 | [PARA-IA](PARA-IA.md) | Guía para Agentes IA | Árboles de decisión, matrices, casos excepcionales |
 
 ---
@@ -87,14 +93,17 @@ comfyui/
 │   ├── embeddings/       ← Textual Inversion (.pt, .safetensors)
 │   ├── ipadapter/        ← IP-Adapter pesos
 │   ├── animatediff_models/ ← Motion modules
-│   └── gguf/             ← Modelos cuantizados GGUF
+│   ├── gguf/             ← Modelos cuantizados GGUF
+│   ├── sams/             ← SAM modelos
+│   ├── ultralytics/      ← YOLO detectors
+│   ├── instantid/        ← InstantID adapter
+│   ├── layer_model/      ← Layer Diffusion adapters
+│   ├── photomaker/       ← PhotoMaker pesos
+│   └── pulid/            ← PuLID pesos
 ├── custom_nodes/         ← Extensiones instaladas
 ├── output/               ← Imágenes y videos generados
 ├── input/                ← Imágenes de entrada para workflows
-├── temp/                 ← Caché temporal
-└── user/
-    └── default/
-        └── workflows/    ← Workflows guardados (.json)
+└── user/default/workflows/ ← Workflows guardados (.json)
 ```
 
 ---
@@ -117,5 +126,6 @@ comfyui/
 GPU: NVIDIA RTX 5080 (Blackwell) — 16 GB VRAM GDDR7
 CPU: Intel i9-10900 — RAM: 32 GB — SO: Windows 11 Pro
 Configuración Flux recomendada: FP8 sin flags especiales
+Ollama local: viable (phi3.5 o llama3.2 en CPU)
 Detalles completos: docs/37-perfiles-hardware.md
 ```
