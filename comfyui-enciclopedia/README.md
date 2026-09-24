@@ -12,8 +12,9 @@ Cada nodo hace una cosa específica: cargar un modelo, codificar texto, generar 
 
 ---
 
-## 🗂️ Índice de la Enciclopedia
+## 🗂️ Índice Completo
 
+### Fundamentos
 | # | Archivo | Contenido |
 |---|---------|----------|
 | 1 | [Arquitectura y Conceptos](docs/01-arquitectura-y-conceptos.md) | Cómo funciona ComfyUI por dentro, espacio latente, pipeline |
@@ -30,7 +31,24 @@ Cada nodo hace una cosa específica: cargar un modelo, codificar texto, generar 
 | 12 | [Workflows y JSON](docs/12-workflows-y-json.md) | Guardar, cargar y entender workflows |
 | 13 | [Custom Nodes](docs/13-custom-nodes.md) | Extensiones populares |
 | 14 | [Errores Comunes](docs/14-errores-comunes.md) | Diagnóstico y soluciones |
-| — | [Glosario](glosario.md) | Diccionario alfabético de todos los términos |
+
+### Avanzado
+| # | Archivo | Contenido |
+|---|---------|----------|
+| 15 | [Flux Avanzado](docs/15-flux-avanzado.md) | Arquitectura DiT, formatos FP8/GGUF, guidance, LoRA Flux |
+| 16 | [AnimateDiff y Video](docs/16-animatediff-video.md) | Animación, SVD, Wan2.1, RIFE, exportar video |
+| 17 | [Mejora de Rostros](docs/17-mejora-de-rostros.md) | FaceDetailer, ReActor, Face ID, manos |
+| 18 | [Regional Prompting](docs/18-regional-prompting.md) | Attention Couple, Latent Couple, Gligen, pesos en prompt |
+| 19 | [Model Merging](docs/19-model-merging.md) | Weighted sum, Add Difference, block merge |
+| 20 | [LyCORIS y LoRA Avanzado](docs/20-lycoris-lora-avanzado.md) | LoCon, LoHa, DoRA, block weight |
+| 21 | [Nodos Útiles Avanzados](docs/21-nodos-utiles-avanzados.md) | Imágenes, máscaras, latentes, conditioning, debug |
+| 22 | [Optimización y Rendimiento](docs/22-optimizacion-rendimiento.md) | Flags, xformers, Flash Attn, SDXL Turbo/Lightning |
+| 23 | [Workflows de Referencia](docs/23-workflows-referencia.md) | 8 workflows completos comentados |
+
+### Referencia
+| Archivo | Contenido |
+|---------|----------|
+| [Glosario](glosario.md) | Diccionario alfabético de ~50 términos |
 
 ---
 
@@ -40,6 +58,11 @@ Cada nodo hace una cosa específica: cargar un modelo, codificar texto, generar 
 - **Buscas un término específico**: ve directo al [Glosario](glosario.md)
 - **Tienes un error**: ve a [Errores Comunes](docs/14-errores-comunes.md)
 - **Quieres instalar extensiones**: ve a [Custom Nodes](docs/13-custom-nodes.md)
+- **Usas Flux**: ve a [Flux Avanzado](docs/15-flux-avanzado.md)
+- **Quieres hacer videos**: ve a [AnimateDiff y Video](docs/16-animatediff-video.md)
+- **Los rostros salen mal**: ve a [Mejora de Rostros](docs/17-mejora-de-rostros.md)
+- **Quieres optimizar velocidad**: ve a [Optimización y Rendimiento](docs/22-optimizacion-rendimiento.md)
+- **Ejemplos prácticos**: ve a [Workflows de Referencia](docs/23-workflows-referencia.md)
 
 ---
 
@@ -48,18 +71,24 @@ Cada nodo hace una cosa específica: cargar un modelo, codificar texto, generar 
 ```
 ComfyUI/
 ├── models/
-│   ├── checkpoints/     ← modelos principales (.safetensors, .ckpt)
-│   ├── vae/             ← modelos VAE
-│   ├── loras/           ← archivos LoRA
-│   ├── embeddings/      ← textual inversions
-│   ├── controlnet/      ← modelos ControlNet
-│   ├── ipadapter/       ← modelos IP-Adapter
-│   ├── upscale_models/  ← modelos de upscaling
-│   └── clip/            ← modelos CLIP/T5
-├── custom_nodes/        ← extensiones instaladas
-├── input/               ← imágenes de entrada
-├── output/              ← imágenes generadas
-└── workflows/           ← workflows guardados (.json)
+│   ├── checkpoints/         ← modelos principales (.safetensors, .ckpt)
+│   ├── vae/                 ← modelos VAE
+│   ├── loras/               ← archivos LoRA y LyCORIS
+│   ├── embeddings/          ← textual inversions
+│   ├── controlnet/          ← modelos ControlNet
+│   ├── ipadapter/           ← modelos IP-Adapter
+│   ├── upscale_models/      ← modelos de upscaling (ESRGAN, etc.)
+│   ├── clip/                ← modelos CLIP/T5 separados
+│   ├── unet/                ← UNets separados (Flux, etc.)
+│   ├── clip_vision/         ← CLIP Vision para IP-Adapter
+│   ├── ultralytics/         ← detectores (FaceDetailer)
+│   ├── sams/                ← SAM models
+│   ├── animatediff_models/  ← motion modules
+│   └── gligen/              ← modelos Gligen
+├── custom_nodes/            ← extensiones instaladas
+├── input/                   ← imágenes de entrada
+├── output/                  ← imágenes generadas
+└── user/                    ← workflows guardados y configuración
 ```
 
 ---
