@@ -2,7 +2,7 @@
 
 > Este archivo está diseñado para ser consumido por agentes IA. Contiene árboles de decisión, matrices de compatibilidad, reglas con niveles de confianza, casos excepcionales documentados y URLs de fuentes primarias. Todo el conocimiento de la enciclopedia está condensado aquí en formato machine-readable.
 
-**Enciclopedia completa**: 50 docs + glosario = 52 archivos en `comfyui-enciclopedia/`
+**Enciclopedia completa**: 52 docs + glosario = 54 archivos en `comfyui-enciclopedia/`
 **Perfil hardware usuario Pablo**: `docs/37-perfiles-hardware.md`
 
 ---
@@ -377,6 +377,63 @@ Decisión por caso de uso:
 Siempre consultar doc 37 para verificar viabilidad según VRAM disponible.
 ```
 
+### Cuando el usuario tiene problemas con Flux (diagnóstico rápido)
+
+```
+Problema → Causa → Solución (doc 51):
+
+"imagen muy saturada/quemada"
+  → CFG > 1.0 en KSampler    → bajar a 1.0
+  → FluxGuidance > 5.0        → bajar a 3.5
+  → sampler no adecuado       → usar euler + simple
+
+"no sigue el prompt"
+  → FluxGuidance muy bajo     → subir a 3.5-4.0
+  → usando schnell con prompt complejo → cambiar a dev
+  → paréntesis de peso (word:1.5) → NO funcionan en Flux
+
+"imagen con artefactos/textura rara"
+  → LoRA de SDXL/SD1.5 cargado → verificar que sea LoRA de Flux
+  → FP8 en VAE               → usar ae.safetensors estándar
+  → resolución < 768px        → mínimo 768×768
+
+"VRAM OOM en 16 GB"
+  → BF16 completo             → cambiar a FP8: flux1-dev-fp8.safetensors
+  → T5XXL en FP32             → cambiar a t5xxl_fp8_e4m3fn.safetensors
+  → resolución muy alta       → máximo 1536×1536 sin VAE Tiled
+  → PuLID + Flux dev FP16     → usar todo en FP8
+
+"inpainting con Flux da resultados malos"
+  → usando flux1-dev           → usar flux1-fill-dev (modelo dedicado)
+  → guidance=3.5 en Fill       → guidance=28-35 para Flux Fill
+  → CE-FL005
+
+Referencia: doc 51 (todos los trucos Flux), doc 37 (perfil hardware Pablo)
+```
+
+### Cuando el usuario quiere describir una cámara o estilo cinematográfico
+
+```
+Para construir un prompt cinematográfico completo:
+[PLANO] + [ÁNGULO] + [SUJETO] + [ILUMINACIÓN] + [LENTE] + [DoF] + [GRANO] + [COLOR]
+
+Planos: extreme wide shot, wide, medium, close-up, extreme close-up
+Ángulos: eye level, low angle, high angle, bird's eye, dutch angle, POV
+Lentes: 14mm (distorsión), 35-50mm (natural), 85mm (retrato), 400mm (telefoto)
+DoF: f/1.2-f/1.4 (bokeh máximo), f/2.8 (retrato), f/8-f/11 (todo enfocado)
+Iluminación: golden hour, Rembrandt, contraluz, neon, volumétrico
+Grano: Kodak Portra 400, Fuji Velvia, Cinestill 800T, Kodak Tri-X
+Color: teal and orange, bleach bypass, Kodachrome, desaturado
+
+Estilos director rápidos:
+  Épico atmosférico: "Roger Deakins cinematography style"
+  Thriller oscuro:   "Gordon Willis high contrast underlit"
+  Natural íntimo:    "Emmanuel Lubezki natural light handheld"
+  Neon urbano:       "Christopher Doyle neon saturated blurred"
+
+Referencia completa: doc 52 (cinematografía completa)
+```
+
 ### Cuando el usuario quiere un estilo visual específico
 
 ```
@@ -547,5 +604,7 @@ HARDWARE Y PYTORCH:
 48-ipadapter-v2-multi-referencia.md       ← FaceID v2, StyleComposition, multi-embed, weight_type, InsightFace
 49-comfyui-n8n-automatizacion-produccion.md ← n8n + API, batch automático, Telegram bot, WebSocket, CE-N8N
 50-keyframing-avanzado-video.md           ← Deforum-style, AnimateDiff motion keys, narrativa multi-escena, CE-KF
+51-flux-trucos-avanzados.md               ← trucos completos Flux: MMDiT, FP8, guidance, LoRA, ControlNet, PuLID, Fill, CE-FL001-010
+52-cinematografia-camara-ia.md            ← planos/ángulos/lentes/iluminación/grano/movimiento/color para prompts IA
 glosario.md                     ← ~50 términos A-Z
 ```

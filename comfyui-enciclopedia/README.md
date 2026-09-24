@@ -4,7 +4,7 @@
 
 Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, video IA, herramientas de entrenamiento, generación 3D/audio, segmentación, preservación de identidad, poses y nube. Todos los documentos incluyen declaraciones técnicas para consumo por agentes IA, casos excepcionales y recursos.
 
-**Total: 50 documentos + glosario + PARA-IA = 52 archivos**
+**Total: 52 documentos + glosario + PARA-IA = 54 archivos**
 
 ---
 
@@ -57,6 +57,8 @@ Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, v
 | [46](docs/46-condiciones-especiales.md) | Condiciones Especiales | CE-S/P/C/W/M/H — 15+ casos excepcionales documentados + trucos |
 | [47](docs/47-differential-diffusion-stylealigned.md) | Differential Diffusion + StyleAligned | Denoising variable por zona y coherencia de estilo en batch |
 | [48](docs/48-ipadapter-v2-multi-referencia.md) | IP-Adapter v2 Multi-Referencia | FaceID v2, StyleComposition, multi-embed, start/end_at |
+| [51](docs/51-flux-trucos-avanzados.md) | Flux: Trucos Avanzados | MMDiT, FP8 RTX 5080, guidance diferencial, LoRAs, ControlNet Flux, PuLID, Fill, hi-res |
+| [52](docs/52-cinematografia-camara-ia.md) | Cinematografía y Cámara IA | Planos, ángulos, lentes, iluminación, grano de película, movimiento, estilos director |
 
 ### Avanzado — Video IA
 
