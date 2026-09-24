@@ -4,7 +4,7 @@
 
 Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, video IA, herramientas de entrenamiento, generación 3D/audio, segmentación, preservación de identidad, poses y nube. Todos los documentos incluyen declaraciones técnicas para consumo por agentes IA, casos excepcionales y recursos.
 
-**Total: 43 documentos + glosario + PARA-IA = 45 archivos**
+**Total: 46 documentos + glosario + PARA-IA = 48 archivos**
 
 ---
 
@@ -52,6 +52,9 @@ Referencia completa del ecosistema ComfyUI: nodos, modelos, samplers, errores, v
 | [39](docs/39-layer-diffusion.md) | Layer Diffusion | Imágenes con alpha, composición por capas, FG/BG |
 | [40](docs/40-photomaker-instantid.md) | Preservación de Identidad | PhotoMaker, InstantID, PuLID, IP-Adapter FaceID |
 | [43](docs/43-pose-estimation.md) | Estimación de Pose | DWPose, OpenPose, ControlNet pose, video pose |
+| [44](docs/44-estilos-visuales.md) | Estilos Visuales | 20+ estilos con fórmulas exactas de prompt, samplers, modelos |
+| [45](docs/45-recetas-probadas.md) | Recetas Probadas | 10 workflows con parámetros exactos validados en hardware real |
+| [46](docs/46-condiciones-especiales.md) | Condiciones Especiales | CE-S/P/C/W/M/H — 15+ casos excepcionales documentados + trucos |
 
 ### Avanzado — Video IA
 

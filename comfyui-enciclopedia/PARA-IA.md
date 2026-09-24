@@ -2,7 +2,7 @@
 
 > Este archivo está diseñado para ser consumido por agentes IA. Contiene árboles de decisión, matrices de compatibilidad, reglas con niveles de confianza, casos excepcionales documentados y URLs de fuentes primarias. Todo el conocimiento de la enciclopedia está condensado aquí en formato machine-readable.
 
-**Enciclopedia completa**: 37 docs + glosario = 39 archivos en `comfyui-enciclopedia/`
+**Enciclopedia completa**: 46 docs + glosario = 48 archivos en `comfyui-enciclopedia/`
 **Perfil hardware usuario Pablo**: `docs/37-perfiles-hardware.md`
 
 ---
@@ -240,6 +240,92 @@ EXC-H001: 32 GB RAM + 16 GB VRAM (perfil Pablo)
 EXC-H002: NVLink multi-GPU
   ComfyUI NO aprovecha NVLink para expandir VRAM lógica
   NVLink útil solo para NCCL en entrenamiento distribuido, no inferencia ComfyUI
+
+EXC-H003: Tres tipos de OOM en ComfyUI
+  Tipo A: durante generación (UNet) → reducir resolución, pasos, batch
+  Tipo B: durante carga de modelo → --lowvram o --highvram, usar FP8/GGUF
+  Tipo C: durante VAE decode → usar VAE Decode Tiled (tilesize 512)
+  Referencia: doc 46, CE-H003
+```
+
+### Samplers y Schedulers
+
+```
+CE-S001: Samplers ancestrales — NO determinísticos entre hardware
+  euler_a, dpm++ 2s a, dpm++ SDE: misma seed → diferentes resultados en distintas GPUs
+  Para reproducibilidad exacta: usar euler o dpm++ 2m (no ancestrales)
+  Referencia: doc 46, CE-S001
+
+CE-S002: Karras vs Normal
+  Karras: convergencia más rápida, menos pasos necesarios (ideal ≤20 pasos)
+  Normal: más estable en pasos altos (>25), mejor para estilos artísticos
+  Referencia: doc 46, CE-S002
+
+CE-S003: DPM++ 2M Karras — sampler profesional estándar
+  Mejor balance calidad/velocidad para SD1.5 y SDXL
+  20 pasos, CFG 7.0: referencia base para comparar otros samplers
+  Referencia: doc 46, CE-S003
+```
+
+### Precisión y Memoria
+
+```
+CE-P001: BF16 vs FP16
+  BF16: rango dinámico mayor, menos NaN en SDXL, recomendado para Ampere+
+  FP16: más compatibilidad, mayor precisión numérica
+  RTX 5080 (Blackwell): usar BF16 para SDXL, FP8 para Flux
+  Referencia: doc 46, CE-P001
+
+CE-P002: FP8 solo en hardware compatible
+  Hopper (H100), Lovelace (RTX 4000 series), Blackwell (RTX 5000 series)
+  NUNCA usar FP8 para el VAE (artefactos garantizados)
+  Referencia: doc 46, CE-P002
+
+CE-P003: TAESD solo para preview
+  TAESD (Tiny AutoEncoder): solo para vista previa en tiempo real
+  NUNCA usar para imagen final — calidad muy inferior
+  Para final: ae.safetensors (Flux), sdxl_vae.safetensors (SDXL)
+  Referencia: doc 46, CE-P003
+```
+
+### CLIP y Texto
+
+```
+CE-C001: Límite 77 tokens
+  SD1.5/SDXL: límite real de 77 tokens por CLIP
+  Soluciones: BREAK para multi-chunk, T5-XXL (Flux) sin límite práctico
+  Referencia: doc 46, CE-C001
+
+CE-C002: Pesos con paréntesis — solo SD1.5/SDXL
+  (palabra:1.5) funciona en SD1.5 y SDXL
+  EN FLUX NO FUNCIONA — ignorado silenciosamente
+  Para enfatizar en Flux: reformular el prompt, no usar paréntesis
+  Referencia: doc 46, CE-C002
+```
+
+### Modelos Específicos
+
+```
+CE-M001: Flux doble-CFG — CRÍTICO
+  KSampler cfg DEBE ser 1.0 para Flux
+  La guidance va en el nodo FluxGuidance (3.0-3.5 para dev)
+  CFG > 1.0 en KSampler + FluxGuidance = oversaturation/artefactos
+  Referencia: doc 46, CE-M001
+
+CE-M002: SDXL base+refiner — split óptimo
+  Split en step 20/25 (80% base, 20% refiner)
+  add_noise=false en el KSampler del refiner
+  Referencia: doc 46, CE-M002
+
+CE-M003: AnimateDiff tensión temporal
+  Reducir motion_strength a 0.75-0.90 para evitar flickering
+  context_length=16 por defecto; aumentar puede causar incoherencia
+  Referencia: doc 46, CE-M003
+
+CE-M004: Inpainting — doble encode
+  Usar "VAE Encode for Inpainting" específico, NO el VAE Encode genérico
+  El encode genérico no setea la máscara correctamente
+  Referencia: doc 46, CE-M004
 ```
 
 ---
@@ -289,6 +375,36 @@ Decisión por caso de uso:
   Audio: MusicGen para música, Bark para TTS (doc 34)
 
 Siempre consultar doc 37 para verificar viabilidad según VRAM disponible.
+```
+
+### Cuando el usuario quiere un estilo visual específico
+
+```
+Referenciar doc 44 (estilos-visuales) para:
+  Fotorrealismo: Flux dev FP8, steps=28, cfg=1.0, FluxGuidance=3.5
+  Anime SDXL: Illustrious XL, euler_a karras, steps=25, cfg=7.0, CLIP Skip=-2
+  Concepto cinematográfico: DreamShaperXL, dpm++ 2m karras, 1344×768
+  Pintura al óleo: SDXL realista, dpm++ 2m, cfg=9.0, steps=28
+
+Estructura universal de prompt:
+  [SUJETO] + [ESTILO] + [ILUMINACIÓN] + [CÁMARA/ÁNGULO] + [CALIDAD]
+
+CRÍTICO: paréntesis de peso (palabra:1.5) solo para SD1.5/SDXL, NO para Flux
+Referencia: doc 44 (estilos), doc 46 CE-C002
+```
+
+### Cuando el usuario quiere un workflow probado
+
+```
+Referenciar doc 45 (recetas-probadas) para:
+  RECETA-01: Portrait Flux FP8 — steps=28, cfg=1.0, FluxGuidance=3.5
+  RECETA-02: Anime SDXL — euler_a karras, steps=25, cfg=7.0
+  RECETA-04: Video Wan2.1 para Pablo (RTX 5080) — 14B FP8, 49-81 frames, cfg=6.0
+  RECETA-05: Hi-res fix 2K — 3 etapas (gen + latent upscale 2x + img2img denoise=0.4)
+  RECETA-06: FaceDetailer — yolov8n + SAM ViT-B, guide_size=512, denoise=0.45
+  RECETA-09: Flux schnell rápido — steps=4, FluxGuidance=2.5 (~3-5 seg RTX 5080)
+
+Para RTX 5080 (perfil Pablo): priorizar RECETA-01, RECETA-04, RECETA-09
 ```
 
 ### Cuando se trata de entrenar LoRA
@@ -347,6 +463,29 @@ HERRAMIENTAS ENTRENAMIENTO:
   SimpleTuner:          https://github.com/bghira/SimpleTuner
   ai-toolkit (Flux):    https://github.com/ostris/ai-toolkit
 
+IDENTIDAD Y SEGMENTACION:
+  SAM (Segment Anything): https://github.com/facebookresearch/segment-anything
+  SAM2 (Meta):            https://github.com/facebookresearch/sam2
+  Grounding DINO:         https://github.com/IDEA-Research/GroundingDINO
+  BiRefNet:               https://github.com/ZhengPeng7/BiRefNet
+  LayerDiffuse:           https://github.com/huchenlei/ComfyUI-layerdiffuse
+  PhotoMaker:             https://github.com/TencentARC/PhotoMaker
+  InstantID:              https://github.com/InstantID/InstantID
+  PuLID (Flux):           https://github.com/ToTheBeginning/PuLID
+  DWPose (ControlNet Aux):https://github.com/Fannovel16/comfyui_controlnet_aux
+
+LLM Y PROMPTS DINAMICOS:
+  Ollama (local LLMs):    https://ollama.com
+  ComfyUI-Ollama:         https://github.com/stavsap/comfyui-ollama
+  Dynamic Prompts:        https://github.com/adieyal/sd-dynamic-prompts
+  ComfyUI Inspire Pack:   https://github.com/ltdrdata/ComfyUI-Inspire-Pack
+
+NUBE Y HOSTING:
+  RunPod:                 https://www.runpod.io
+  Vast.ai:                https://vast.ai
+  Lambda Labs:            https://lambdalabs.com
+  Ngrok (tunnels):        https://ngrok.com
+
 HARDWARE Y PYTORCH:
   PyTorch MPS (Mac):    https://pytorch.org/docs/stable/notes/mps.html
   PyTorch instalación:  https://pytorch.org/get-started/locally/
@@ -395,5 +534,14 @@ HARDWARE Y PYTORCH:
 35-depth-estimation.md          ← Marigold, Depth Anything, DepthPro
 36-3d-generation.md             ← TripoSR, Zero123++, 3DGS
 37-perfiles-hardware.md         ← perfil Pablo RTX 5080, perfiles GPU
+38-segmentacion-sam.md          ← SAM, YOLO, Grounding DINO, BiRefNet, máscaras
+39-layer-diffusion.md           ← imágenes con alpha, composición por capas FG/BG
+40-photomaker-instantid.md      ← PhotoMaker, InstantID, PuLID, preservación identidad
+41-dynamic-prompts-llm.md       ← wildcards, Ollama, generación de prompts con IA
+42-comfyui-cloud-runpod.md      ← RunPod, Vast.ai, Colab, SSH tunnel, API remota
+43-pose-estimation.md           ← DWPose, OpenPose, ControlNet pose, video pose
+44-estilos-visuales.md          ← 20+ estilos con fórmulas de prompt y parámetros exactos
+45-recetas-probadas.md          ← 10 recetas YAML con parámetros validados y modos de fallo
+46-condiciones-especiales.md    ← CE-S001-S004, CE-P001-P003, CE-C001-C003, CE-W001-W004, CE-M001-M004, CE-H001-H003 + trucos
 glosario.md                     ← ~50 términos A-Z
 ```
