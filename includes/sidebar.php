@@ -48,6 +48,9 @@
     <a href="<?= APP_URL ?>/chat_bot.php" class="nav-item <?= ($activePage ?? '') === 'chat_bot' ? 'active' : '' ?>">
       <i class="bi bi-robot"></i><span>Bot de Chat</span>
     </a>
+    <a href="<?= APP_URL ?>/content_manager.php" class="nav-item <?= ($activePage ?? '') === 'content_manager' ? 'active' : '' ?>">
+      <i class="bi bi-journal-text"></i><span>Gestor Contenido</span>
+    </a>
     <a href="<?= APP_URL ?>/chat_widget.php" class="nav-item <?= ($activePage ?? '') === 'chat_widget' ? 'active' : '' ?>">
       <i class="bi bi-window-stack"></i><span>Widget Web</span>
     </a>

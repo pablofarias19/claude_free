@@ -61,6 +61,7 @@ if ($method === 'POST') {
                 'quick_replies'  => $_POST['quick_replies'] ?? '[]',
                 'is_exact_match' => (int)($_POST['is_exact_match'] ?? 0),
                 'priority'       => (int)($_POST['priority'] ?? 1),
+                'category'       => trim($_POST['category'] ?? 'General') ?: 'General',
                 'is_active'      => 1,
             ];
             if (!$data['trigger_word'] || !$data['response_text']) {
@@ -86,12 +87,19 @@ if ($method === 'POST') {
             json_response(['success' => true]);
 
         // Canned replies
+        case 'toggle_canned':
+            $id    = (int)($_POST['id'] ?? 0);
+            $state = (int)($_POST['is_active'] ?? 0);
+            Database::update('chat_canned', ['is_active' => $state], ['id' => $id]);
+            json_response(['success' => true]);
+
         case 'save_canned':
             $id   = (int)($_POST['id'] ?? 0) ?: null;
             $data = [
                 'title'    => trim($_POST['title']    ?? ''),
                 'shortcut' => trim($_POST['shortcut'] ?? '') ?: null,
                 'content'  => trim($_POST['content']  ?? ''),
+                'category' => trim($_POST['category'] ?? '') ?: null,
             ];
             if (!$data['title'] || !$data['content']) json_response(['error' => 'Campos requeridos'], 400);
             if ($id) {
