@@ -5,7 +5,7 @@
 
 define('APP_NAME',    'MailGenius Pro');
 define('APP_VERSION', '1.0.0');
-define('APP_URL',     'http://localhost/mailgenius');
+define('APP_URL',     'https://www.sucesionlegal.com.ar/mailgenius');
 define('APP_ROOT',    dirname(__DIR__));
 define('UPLOADS_DIR', APP_ROOT . '/uploads');
 define('UPLOADS_URL', APP_URL . '/uploads');

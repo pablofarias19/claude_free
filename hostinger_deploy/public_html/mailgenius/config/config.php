@@ -5,7 +5,7 @@
 
 define('APP_NAME',    'MailGenius Pro');
 define('APP_VERSION', '1.0.0');
-define('APP_URL',     'http://localhost/mailgenius');
+define('APP_URL',     'https://www.sucesionlegal.com.ar/mailgenius');
 define('APP_ROOT',    dirname(__DIR__));
 define('UPLOADS_DIR', APP_ROOT . '/uploads');
 define('UPLOADS_URL', APP_URL . '/uploads');
@@ -23,11 +23,16 @@ if (session_status() === PHP_SESSION_NONE) {
 date_default_timezone_set('America/Buenos_Aires');
 
 // ── Base de datos ────────────────────────────────────────────
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'mailgenius');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+// Load credentials written by setup.php (overrides the defaults below)
+if (file_exists(__DIR__ . '/db.php')) {
+    require_once __DIR__ . '/db.php';
+} else {
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'mailgenius');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_CHARSET', 'utf8mb4');
+}
 
 // ── SMTP (sobreescribe con valores de la BD) ─────────────────
 define('SMTP_HOST',       'smtp.gmail.com');
@@ -131,3 +136,8 @@ function generate_uuid(): string {
 }
 
 require_once APP_ROOT . '/config/Database.php';
+require_once APP_ROOT . '/classes/EmailManager.php';
+require_once APP_ROOT . '/classes/ChatManager.php';
+require_once APP_ROOT . '/classes/CampaignManager.php';
+require_once APP_ROOT . '/classes/ContactManager.php';
+require_once APP_ROOT . '/classes/TemplateManager.php';
