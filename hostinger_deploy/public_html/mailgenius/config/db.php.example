@@ -1,0 +1,9 @@
+<?php
+// Renombrar este archivo a: db.php
+// Completar con los datos de tu base de datos en Hostinger
+
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'u580580751_sucesion');   // nombre de tu base de datos
+define('DB_USER', 'u580580751_sucesion1');  // usuario de base de datos
+define('DB_PASS', 'TU_CONTRASEÑA_AQUI');    // contraseña de base de datos
+define('DB_CHARSET', 'utf8mb4');
