@@ -1593,15 +1593,28 @@ function cwSend() {
   inp.value=''; cwAsk(msg);
 }
 
-function cwAsk(display, search) {
+async function cwAsk(display, search) {
   if (!chatOpen) { chatOpen=true; document.getElementById('chatWin').classList.add('open'); document.getElementById('chatBtn').classList.add('open'); if(!greeted) greeted=true; }
   addMsg('user', display);
   showTyping();
-  setTimeout(() => {
-    hideTyping();
-    const hit = findKB(search||display) || FALLBACK;
-    addMsg('bot', hit.r, hit.qr||[]);
-  }, 800 + Math.random()*500);
+  let hit = null;
+  try {
+    const fd = new FormData();
+    fd.append('message', search || display);
+    if (window._chatSessionId) fd.append('session_id', window._chatSessionId);
+    const res = await fetch('https://www.sucesionlegal.com.ar/mailgenius/api/chat_public.php', {method:'POST', body:fd});
+    if (res.ok) {
+      const data = await res.json();
+      if (data.session_id) window._chatSessionId = data.session_id;
+      if (data.response) {
+        const qr = (data.quick_replies||[]).map(q => typeof q==='string' ? [q,q] : [q.text||q.value||q, q.value||q.text||q]);
+        hit = { r: data.response, qr };
+      }
+    }
+  } catch(e) {}
+  if (!hit) hit = findKB(search||display) || FALLBACK;
+  hideTyping();
+  addMsg('bot', hit.r, hit.qr||[]);
 }
 
 // Notification dot after 4s if not opened
