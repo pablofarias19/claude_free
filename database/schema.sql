@@ -295,7 +295,7 @@ INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_type`, `descrip
 ('app_timezone',         'America/Buenos_Aires',          'string',  'Zona horaria'),
 ('app_url',              'http://localhost/mailgenius',   'string',  'URL base de la app');
 
--- Admin user (password: Admin2024!)
+-- Default admin user (change password after first login via setup.php)
 INSERT INTO `users` (`name`, `email`, `password_hash`, `role`) VALUES
 ('Administrador', 'admin@example.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
 
