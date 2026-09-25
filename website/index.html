@@ -1677,22 +1677,28 @@ async function cwAsk(display, search) {
   if ((search || display) === '_appt_form') { showAppointmentForm(); return; }
   addMsg('user', display);
   showTyping();
-  let hit = null;
+  const query = search || display;
+
+  // Local KB takes priority — always has a curated answer for succession topics
+  let hit = findKB(query);
+
+  // Call API for session logging; only use its response if local KB had no match
   try {
     const fd = new FormData();
-    fd.append('message', search || display);
+    fd.append('message', query);
     if (window._chatSessionId) fd.append('session_id', window._chatSessionId);
     const res = await fetch('https://www.sucesionlegal.com.ar/mailgenius/api/chat_public.php', {method:'POST', body:fd});
     if (res.ok) {
       const data = await res.json();
       if (data.session_id) window._chatSessionId = data.session_id;
-      if (data.response) {
+      if (!hit && data.response) {
         const qr = (data.quick_replies||[]).map(q => typeof q==='string' ? [q,q] : [q.text||q.value||q, q.value||q.text||q]);
         hit = { r: data.response, qr };
       }
     }
   } catch(e) {}
-  if (!hit) hit = findKB(search||display) || FALLBACK;
+
+  if (!hit) hit = FALLBACK;
   hideTyping();
   addMsg('bot', hit.r, hit.qr||[]);
 }
