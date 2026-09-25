@@ -280,24 +280,24 @@ INSERT INTO `response_categories` (`name`, `description`, `color`, `icon`, `prio
 ('Cancelación',       'Solicitudes de cancelación',            '#6b7280', 'x-circle',          6);
 
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_type`, `description`) VALUES
-('smtp_host',            'smtp.gmail.com',                'string',  'Servidor SMTP'),
+('smtp_host',            'smtp.hostinger.com',            'string',  'Servidor SMTP'),
 ('smtp_port',            '587',                           'integer', 'Puerto SMTP'),
-('smtp_user',            '',                              'string',  'Usuario SMTP'),
+('smtp_user',            'sucesiones@fariasortiz.com.ar', 'string',  'Usuario SMTP'),
 ('smtp_password',        '',                              'string',  'Contraseña SMTP'),
 ('smtp_encryption',      'tls',                           'string',  'Tipo de cifrado'),
-('from_name',            'MailGenius Pro',                'string',  'Nombre del remitente'),
-('from_email',           'noreply@example.com',           'string',  'Email del remitente'),
+('from_name',            'Pablo Farias Abogados',         'string',  'Nombre del remitente'),
+('from_email',           'sucesiones@fariasortiz.com.ar', 'string',  'Email del remitente'),
 ('max_attachment_size',  '26214400',                      'integer', 'Tamaño máximo adjuntos (25MB)'),
 ('emails_per_hour',      '200',                           'integer', 'Límite emails por hora'),
 ('auto_reply_enabled',   '1',                             'boolean', 'Respuestas automáticas'),
 ('tracking_enabled',     '1',                             'boolean', 'Tracking de emails'),
-('app_name',             'MailGenius Pro',                'string',  'Nombre de la aplicación'),
+('app_name',             'Farias Ortiz - Sucesiones',     'string',  'Nombre de la aplicación'),
 ('app_timezone',         'America/Buenos_Aires',          'string',  'Zona horaria'),
-('app_url',              'http://localhost/mailgenius',   'string',  'URL base de la app');
+('app_url',              'https://www.sucesionlegal.com.ar/mailgenius', 'string', 'URL base de la app');
 
--- Default admin user (change password after first login via setup.php)
+-- Admin user
 INSERT INTO `users` (`name`, `email`, `password_hash`, `role`) VALUES
-('Administrador', 'admin@example.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+('Pablo Farias', 'sucesiones@fariasortiz.com.ar', '$2y$12$1cIESt8Pd3KQS1wvyGKUTutmzo0XmliHGzIx5QAVGe4zdWzel.dNa', 'admin');
 
 -- ============================================================
 -- MÓDULO CHAT INTERNO
