@@ -54,22 +54,59 @@ if ($sessionId) {
     }
 }
 
-// ── Enviar email de notificación ───────────────────────────────
-$to      = 'pablofarias19@gmail.com';
-$subject = "Nueva consulta desde la web — $name";
 $fecha   = date('d/m/Y H:i');
-$body    = "Nueva solicitud de consulta recibida el $fecha\n\n"
-         . "Nombre:  $name\n"
-         . "Email:   $email\n"
-         . "Teléfono: " . ($phone ?: '—') . "\n"
-         . "Motivo:  " . ($topic ?: '—') . "\n\n"
-         . "Respondé directamente a: $email\n"
-         . "---\nEnviado desde sucesionlegal.com.ar";
+$from    = "sucesiones@fariasortiz.com.ar";
+$mailer  = "X-Mailer: PHP/" . phpversion();
 
-$headers  = "From: sucesiones@fariasortiz.com.ar\r\n";
-$headers .= "Reply-To: $email\r\n";
-$headers .= "X-Mailer: PHP/" . phpversion();
+// ── Email al estudio ───────────────────────────────────────────
+$subjectEstudio = "Nueva consulta desde la web — $name";
+$bodyEstudio    = "Nueva solicitud de consulta recibida el $fecha\n\n"
+                . "Nombre:   $name\n"
+                . "Email:    $email\n"
+                . "Teléfono: " . ($phone ?: '—') . "\n"
+                . "Motivo:   " . ($topic ?: '—') . "\n\n"
+                . "Respondé directamente a: $email\n"
+                . "---\nEnviado desde sucesionlegal.com.ar";
 
-$sent = mail($to, "=?UTF-8?B?" . base64_encode($subject) . "?=", $body, $headers);
+$headersEstudio  = "From: $from\r\n";
+$headersEstudio .= "Reply-To: $email\r\n";
+$headersEstudio .= $mailer;
+
+$sent = mail('pablofarias19@gmail.com',
+    "=?UTF-8?B?" . base64_encode($subjectEstudio) . "?=",
+    $bodyEstudio, $headersEstudio);
+
+// ── Email de confirmación al cliente ──────────────────────────
+$subjectCliente = "Recibimos tu consulta — Pablo Farias Abogados";
+$bodyCliente    = "Hola $name,\n\n"
+                . "Recibimos tu solicitud de consulta el $fecha. Nos pondremos en contacto contigo a la brevedad dentro del horario de atención (lunes a viernes, 9 a 18 hs).\n\n"
+                . "Si tenés urgencia, podés escribirnos directamente por WhatsApp al +54 9 11 6848-0793.\n\n"
+                . "─────────────────────────────────────\n"
+                . "NUESTROS SERVICIOS\n"
+                . "─────────────────────────────────────\n"
+                . "✔ Declaratoria de herederos\n"
+                . "✔ Partición de bienes e inscripciones registrales\n"
+                . "✔ Sucesiones con herederos en el exterior\n"
+                . "✔ Tasaciones y liquidación de herencias\n"
+                . "✔ Asesoramiento en toda Argentina — gestión 100% remota disponible\n\n"
+                . "Primera consulta sin cargo y sin compromiso.\n\n"
+                . "─────────────────────────────────────\n"
+                . "CONTACTO\n"
+                . "─────────────────────────────────────\n"
+                . "📱 WhatsApp: +54 9 11 6848-0793\n"
+                . "📧 Email:    sucesiones@fariasortiz.com.ar\n"
+                . "🌐 Web:      https://www.sucesionlegal.com.ar\n"
+                . "🕐 Horario:  lun–vie 9:00 a 18:00 hs\n\n"
+                . "Muchas gracias por contactarnos.\n\n"
+                . "Pablo Farias Abogados\n"
+                . "Especialistas en Derecho Sucesorio";
+
+$headersCliente  = "From: Pablo Farias Abogados <$from>\r\n";
+$headersCliente .= "Reply-To: $from\r\n";
+$headersCliente .= $mailer;
+
+mail($email,
+    "=?UTF-8?B?" . base64_encode($subjectCliente) . "?=",
+    $bodyCliente, $headersCliente);
 
 echo json_encode(['ok' => true, 'email_sent' => $sent]);
