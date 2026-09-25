@@ -41,10 +41,8 @@ if (!$sessionId) {
         'session_token'  => $sessionId,
         'visitor_name'   => $visitorName,
         'visitor_ip'     => $_SERVER['REMOTE_ADDR'] ?? null,
-        'visitor_ua'     => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255),
         'page_url'       => $_SERVER['HTTP_REFERER'] ?? 'sucesionlegal.com.ar',
         'status'         => 'bot',
-        'created_at'     => date('Y-m-d H:i:s'),
     ]);
 }
 
@@ -54,10 +52,9 @@ $sessionDbId = $session['id'] ?? null;
 
 if ($sessionDbId) {
     Database::insert('chat_messages', [
-        'session_id'   => $sessionDbId,
-        'sender_type'  => 'visitor',
-        'message_text' => $message,
-        'created_at'   => date('Y-m-d H:i:s'),
+        'session_id'  => $sessionDbId,
+        'sender_type' => 'visitor',
+        'content'     => $message,
     ]);
 }
 
@@ -90,10 +87,9 @@ $quickReplies = $matched
 // ── Log bot response ───────────────────────────────────────────
 if ($sessionDbId) {
     Database::insert('chat_messages', [
-        'session_id'   => $sessionDbId,
-        'sender_type'  => 'bot',
-        'message_text' => $responseText,
-        'created_at'   => date('Y-m-d H:i:s'),
+        'session_id'  => $sessionDbId,
+        'sender_type' => 'bot',
+        'content'     => $responseText,
     ]);
 }
 
