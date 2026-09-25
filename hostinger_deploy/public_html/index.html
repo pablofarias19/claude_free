@@ -793,6 +793,34 @@ footer {
   transition: all .15s;
 }
 .cw-chip:hover { background: var(--primary); color: #fff; }
+.cw-appt-form {
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  border-radius: 12px;
+  padding: 14px;
+  width: 100%; max-width: 90%;
+  box-shadow: var(--shadow-sm);
+  animation: msgSlide .25s ease-out;
+}
+.cw-appt-form input {
+  width: 100%; border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 7px 10px;
+  font-size: .8rem; font-family: 'Outfit', sans-serif;
+  background: var(--chat-bg); color: var(--text);
+  outline: none; margin-bottom: 7px; display: block;
+  transition: border-color .2s;
+}
+.cw-appt-form input:focus { border-color: var(--primary); }
+.cw-appt-form input::placeholder { color: var(--text-muted); }
+.cw-appt-form button[type=submit] {
+  width: 100%; background: var(--primary); color: #fff;
+  border: none; border-radius: 8px; padding: 8px;
+  font-size: .83rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+  cursor: pointer; transition: background .2s;
+}
+.cw-appt-form button[type=submit]:hover { background: var(--primary-dk); }
+.cw-appt-form button[type=submit]:disabled { opacity: .6; cursor: default; }
+.cw-appt-note { font-size: .72rem; color: var(--text-muted); margin-top: 6px; text-align: center; }
 .cw-typing {
   display: flex; align-items: center; gap: 4px;
   padding: 9px 13px; background: var(--surface);
@@ -1509,11 +1537,15 @@ const KB = [
 
   { k:['contacto','comunicar','comunicarme','hablar','reunión','cita','turno'],
     r:'Para contactar el estudio:\n\n📱 **WhatsApp**: +54 9 11 6848-0793\n🌐 **Web**: sucesionlegal.com.ar\n🕐 **Horario**: lun–vie 9:00 a 18:00 hs\n\n✅ Primera consulta sin cargo\n✅ Videollamada disponible',
-    qr:[['WhatsApp','whatsapp'],['¿Consulta gratis?','gratis']] },
+    qr:[['📅 Reservar turno online','_appt_form'],['WhatsApp','whatsapp'],['¿Consulta gratis?','gratis']] },
+
+  { k:['agendar','reservar','concertar','solicitar consulta','pedir turno','quiero consultar','me interesa'],
+    r:'¡Perfecto! Reservá tu consulta gratuita en segundos.',
+    qr:[['📅 Completar formulario','_appt_form']] },
 
   { k:['gratis','sin cargo','sin costo','gratuita','primera consulta'],
     r:'Sí, la **primera consulta es sin cargo**: en persona, videollamada o WhatsApp. Evaluamos tu situación, explicamos los pasos y damos un presupuesto orientativo sin compromiso.\n\n📱 **+54 9 11 6848-0793**',
-    qr:[['Reservar consulta','contacto'],['WhatsApp','whatsapp']] },
+    qr:[['📅 Reservar consulta','_appt_form'],['WhatsApp','whatsapp']] },
 ];
 
 const FALLBACK = {
@@ -1556,7 +1588,7 @@ function greet() {
   greeted = true;
   setTimeout(() => addMsg('bot',
     '¡Hola! Soy el asistente del estudio **Pablo Farias Abogados**. La primera consulta es **sin cargo**. ¿En qué te puedo ayudar hoy?',
-    [['¿Qué es una sucesión?','que es sucesion'],['¿Cuánto cuesta?','costo'],['¿Qué documentos?','documentos'],['WhatsApp','whatsapp']]
+    [['¿Qué es una sucesión?','que es sucesion'],['¿Cuánto cuesta?','costo'],['📅 Reservar consulta','_appt_form'],['WhatsApp','whatsapp']]
   ), 500);
 }
 
@@ -1595,8 +1627,54 @@ function cwSend() {
   inp.value=''; cwAsk(msg);
 }
 
+function showAppointmentForm() {
+  const c = document.getElementById('cwMsgs');
+  const d = document.createElement('div');
+  d.className = 'cw-msg bot';
+  d.innerHTML = `<div class="cw-bubble">Completá el formulario y te contactamos a la brevedad. Primera consulta <strong>sin cargo</strong> ✅</div><div class="cw-time">${ts()}</div>`;
+  c.appendChild(d);
+
+  const f = document.createElement('form');
+  f.className = 'cw-appt-form';
+  f.innerHTML = `
+    <input name="name" type="text" placeholder="Tu nombre *" required maxlength="100">
+    <input name="email" type="email" placeholder="Tu email *" required maxlength="150">
+    <input name="phone" type="tel" placeholder="Teléfono (opcional)" maxlength="30">
+    <input name="topic" type="text" placeholder="¿Sobre qué querés consultar?" maxlength="200">
+    <button type="submit">Solicitar consulta gratuita</button>
+    <div class="cw-appt-note">🔒 Tu información es confidencial</div>
+  `;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = f.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    const fd = new FormData(f);
+    if (window._chatSessionId) fd.append('session_id', window._chatSessionId);
+    try {
+      const res = await fetch('https://www.sucesionlegal.com.ar/mailgenius/api/chat_appointment.php', {method:'POST', body:fd});
+      const data = res.ok ? await res.json() : {ok:false};
+      f.remove();
+      if (data.ok) {
+        addMsg('bot', '✅ ¡Recibimos tu solicitud! Te contactaremos en el horario de atención (lun–vie 9 a 18 hs).\n\nSi tenés urgencia, escribinos por WhatsApp:\n\n📱 **+54 9 11 6848-0793**',
+          [['WhatsApp','whatsapp']]);
+      } else {
+        addMsg('bot', 'Hubo un inconveniente al enviar. Por favor contactanos directamente:\n\n📱 **WhatsApp**: +54 9 11 6848-0793',
+          [['WhatsApp','whatsapp']]);
+      }
+    } catch(err) {
+      f.remove();
+      addMsg('bot', 'No se pudo enviar. Contactanos por WhatsApp:\n\n📱 **+54 9 11 6848-0793**',
+        [['WhatsApp','whatsapp']]);
+    }
+    c.scrollTop = c.scrollHeight;
+  });
+  c.appendChild(f);
+  c.scrollTop = c.scrollHeight;
+}
+
 async function cwAsk(display, search) {
   if (!chatOpen) { chatOpen=true; document.getElementById('chatWin').classList.add('open'); document.getElementById('chatBtn').classList.add('open'); if(!greeted) greeted=true; }
+  if ((search || display) === '_appt_form') { showAppointmentForm(); return; }
   addMsg('user', display);
   showTyping();
   let hit = null;
