@@ -16,7 +16,7 @@
 <script src="<?= APP_URL ?>/assets/js/app.js"></script>
 <?php if (!empty($extraScripts)): ?>
   <?php foreach ($extraScripts as $s): ?>
-    <script src="<?= APP_URL ?>/assets/js/<?= e($s) ?>"></script>
+    <script src="<?= APP_URL ?>/<?= e($s) ?>"></script>
   <?php endforeach; ?>
 <?php endif; ?>
 </body>

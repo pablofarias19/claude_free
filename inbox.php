@@ -38,13 +38,13 @@ switch ($box) {
 }
 
 $total = Database::query(
-    "SELECT COUNT(*) FROM emails WHERE status = ? $whereExtra",
+    "SELECT COUNT(*) FROM emails WHERE type = ? $whereExtra",
     array_merge([$status], $params)
 )->fetchColumn();
 
 $emails = Database::fetchAll(
     "SELECT e.*, (SELECT COUNT(*) FROM email_attachments WHERE email_id=e.id) AS att_count
-     FROM emails e WHERE e.status = ? $whereExtra
+     FROM emails e WHERE e.type = ? $whereExtra
      ORDER BY e.created_at DESC LIMIT $perPage OFFSET $offset",
     array_merge([$status], $params)
 );

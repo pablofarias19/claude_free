@@ -186,7 +186,7 @@ include 'includes/header.php';
                 $allGroups = Database::fetchAll("SELECT * FROM contact_groups ORDER BY name");
                 foreach ($allGroups as $g): ?>
                   <label class="d-flex align-items-center gap-2 badge bg-secondary fw-normal py-2 px-3" style="cursor:pointer;font-size:.85rem">
-                    <input type="checkbox" name="groups[]" value="<?= $g['id'] ?>" class="form-check-input m-0">
+                    <input type="radio" name="group_id" value="<?= $g['id'] ?>" class="form-check-input m-0">
                     <?= e($g['name']) ?> (<?= $g['contact_count'] ?? 0 ?>)
                   </label>
                 <?php endforeach; ?>
@@ -195,7 +195,7 @@ include 'includes/header.php';
             <div class="col-12">
               <label class="form-label">Cuerpo del email</label>
               <div id="campEditor" style="height:280px"></div>
-              <textarea id="campBody" name="body" style="display:none"></textarea>
+              <textarea id="campBody" name="body_html" style="display:none"></textarea>
             </div>
             <div class="col-md-6">
               <label class="form-label">Programar envío (opcional)</label>

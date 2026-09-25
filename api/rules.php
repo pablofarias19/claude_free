@@ -55,16 +55,17 @@ if ($method === 'POST') {
         // Bot responses
         case 'save_bot':
             $id   = (int)($_POST['id'] ?? 0) ?: null;
+            $triggerWord = trim($_POST['trigger_word'] ?? '');
+            $keywords = array_filter(array_map('trim', explode(',', $triggerWord)));
             $data = [
-                'trigger_word'   => trim($_POST['trigger_word'] ?? ''),
-                'response_text'  => trim($_POST['response_text'] ?? ''),
-                'quick_replies'  => $_POST['quick_replies'] ?? '[]',
-                'is_exact_match' => (int)($_POST['is_exact_match'] ?? 0),
-                'priority'       => (int)($_POST['priority'] ?? 1),
-                'category'       => trim($_POST['category'] ?? 'General') ?: 'General',
-                'is_active'      => 1,
+                'trigger_keywords' => json_encode(array_values($keywords)),
+                'response_text'    => trim($_POST['response_text'] ?? ''),
+                'quick_replies'    => $_POST['quick_replies'] ?? '[]',
+                'priority'         => (int)($_POST['priority'] ?? 1),
+                'category'         => trim($_POST['category'] ?? 'General') ?: 'General',
+                'is_active'        => 1,
             ];
-            if (!$data['trigger_word'] || !$data['response_text']) {
+            if (!$triggerWord || !$data['response_text']) {
                 json_response(['error' => 'Campos requeridos'], 400);
             }
             if ($id) {

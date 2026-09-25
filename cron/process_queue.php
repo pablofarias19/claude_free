@@ -20,8 +20,24 @@ register_shutdown_function(function() use ($lockFile) {
 echo "[" . date('Y-m-d H:i:s') . "] Starting queue processor...\n";
 
 try {
-    $mgr   = new EmailManager();
-    $count = $mgr->sendScheduled();
+    $mgr  = new EmailManager();
+    $due  = Database::fetchAll(
+        "SELECT * FROM emails WHERE type = 'scheduled' AND scheduled_at <= NOW() ORDER BY scheduled_at ASC LIMIT 50",
+        []
+    );
+    $count = 0;
+    foreach ($due as $email) {
+        $data = array_merge($email, [
+            'to'       => json_decode($email['to_emails'], true),
+            'cc'       => json_decode($email['cc_emails']  ?? '[]', true),
+            'bcc'      => json_decode($email['bcc_emails'] ?? '[]', true),
+        ]);
+        $result = $mgr->send($data);
+        if ($result['success']) {
+            Database::query("UPDATE emails SET type='sent', sent_at=NOW() WHERE id=?", [$email['id']]);
+            $count++;
+        }
+    }
     echo "[" . date('Y-m-d H:i:s') . "] Processed {$count} scheduled email(s).\n";
 } catch (Exception $e) {
     echo "[" . date('Y-m-d H:i:s') . "] ERROR: " . $e->getMessage() . "\n";
@@ -31,7 +47,7 @@ try {
 try {
     $camp = new CampaignManager();
     $activeCampaigns = Database::fetchAll(
-        "SELECT id FROM campaigns WHERE status = 'sending'",
+        "SELECT id FROM campaigns WHERE status = 'running'",
         []
     );
     foreach ($activeCampaigns as $c) {

@@ -184,18 +184,40 @@ class ChatManager {
         )->execute([$sessionId, $readerType]);
     }
 
+    private const ALLOWED_MIME = [
+        'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp',
+        'application/pdf' => 'pdf',
+        'text/plain' => 'txt',
+        'application/msword' => 'doc',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+    ];
+    private const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
+
     public function uploadChatFile(int $sessionId, array $file): array {
         if ($file['error'] !== UPLOAD_ERR_OK) {
             return ['success' => false, 'error' => 'Error de subida'];
         }
+        if ($file['size'] > self::MAX_UPLOAD_BYTES) {
+            return ['success' => false, 'error' => 'Archivo demasiado grande (máx. 10 MB)'];
+        }
 
         $mime = mime_content_type($file['tmp_name']);
-        $dir  = UPLOADS_DIR . '/chat/' . $sessionId . '/';
+        if (!isset(self::ALLOWED_MIME[$mime])) {
+            return ['success' => false, 'error' => 'Tipo de archivo no permitido'];
+        }
+
+        $dir = UPLOADS_DIR . '/chat/' . $sessionId . '/';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
-        $ext    = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $stored = bin2hex(random_bytes(12)) . '.' . $ext;
-        $path   = $dir . $stored;
+        // Write .htaccess once to block script execution in this tree
+        $htaccess = UPLOADS_DIR . '/chat/.htaccess';
+        if (!file_exists($htaccess)) {
+            file_put_contents($htaccess, "Options -ExecCGI\nAddHandler default-handler .php .php5 .phtml .pl .py .cgi\n");
+        }
+
+        $safeExt = self::ALLOWED_MIME[$mime];
+        $stored  = bin2hex(random_bytes(12)) . '.' . $safeExt;
+        $path    = $dir . $stored;
 
         if (!move_uploaded_file($file['tmp_name'], $path)) {
             return ['success' => false, 'error' => 'Error al guardar'];

@@ -27,19 +27,17 @@ if ($search) {
 }
 
 $total = Database::query(
-    "SELECT COUNT(DISTINCT c.id) FROM contacts c
-     LEFT JOIN contact_group_members cg ON cg.contact_id = c.id
+    "SELECT COUNT(*) FROM contacts c
+     LEFT JOIN contact_groups g ON g.id = c.group_id
      WHERE 1=1 $whereExtra",
     $params
 )->fetchColumn();
 
 $contacts = Database::fetchAll(
-    "SELECT DISTINCT c.*, GROUP_CONCAT(g.name SEPARATOR ', ') AS group_names
+    "SELECT c.*, g.name AS group_names
      FROM contacts c
-     LEFT JOIN contact_group_members cg ON cg.contact_id = c.id
-     LEFT JOIN contact_groups g ON g.id = cg.group_id
+     LEFT JOIN contact_groups g ON g.id = c.group_id
      WHERE 1=1 $whereExtra
-     GROUP BY c.id
      ORDER BY c.name ASC LIMIT $perPage OFFSET $offset",
     $params
 );

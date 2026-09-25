@@ -32,7 +32,7 @@ if ($method === 'POST') {
                 'name'            => trim($_POST['name'] ?? ''),
                 'primary_color'   => trim($_POST['primary_color'] ?? '#4f46e5'),
                 'position'        => in_array($_POST['position'] ?? '', ['bottom-right','bottom-left']) ? $_POST['position'] : 'bottom-right',
-                'allowed_domains' => trim($_POST['allowed_domains'] ?? '') ?: null,
+                'domain'          => trim($_POST['allowed_domains'] ?? '') ?: null,
                 'is_active'       => (int)($_POST['is_active'] ?? 1),
             ];
             if (!$data['name']) json_response(['error' => 'Nombre requerido'], 400);
