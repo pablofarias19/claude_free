@@ -6,9 +6,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-CREATE DATABASE IF NOT EXISTS `mailgenius` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `mailgenius`;
-
 -- Users
 CREATE TABLE `users` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
