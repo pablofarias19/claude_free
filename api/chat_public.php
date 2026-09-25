@@ -4,10 +4,17 @@
  * - Finds bot responses from DB (trigger_keywords matching)
  * - Logs all visitor conversations to chat_sessions / chat_messages
  */
+$allowedOrigins = ['https://www.sucesionlegal.com.ar', 'https://sucesionlegal.com.ar'];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowedOrigins, true)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    header('Access-Control-Allow-Origin: https://www.sucesionlegal.com.ar');
+}
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: https://www.sucesionlegal.com.ar');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+header('Vary: Origin');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST')    { http_response_code(405); echo json_encode(['error' => 'Method not allowed']); exit; }
