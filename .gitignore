@@ -1,0 +1,11 @@
+# Credentials
+config/db.php
+.env
+*.env
+
+# Uploads
+uploads/
+
+# Cache
+*.log
+hostinger_deploy/public_html/mailgenius/config/db.php
